@@ -1,0 +1,2 @@
+# OurCoin
+bcoin for ourchain
