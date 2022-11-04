@@ -565,12 +565,12 @@
 
   [
     "0",
-    "IF 0xba ELSE 1 ENDIF",
+    "IF 0xbc ELSE 1 ENDIF",
     "P2SH,STRICTENC",
     "OK",
     "opcodes above MAX_OPCODE invalid if executed"
   ],
-  ["0", "IF 0xbb ELSE 1 ENDIF", "P2SH,STRICTENC", "OK"],
+  ["0", "IF 0xbd ELSE 1 ENDIF", "P2SH,STRICTENC", "OK"],
   ["0", "IF 0xbc ELSE 1 ENDIF", "P2SH,STRICTENC", "OK"],
   ["0", "IF 0xbd ELSE 1 ENDIF", "P2SH,STRICTENC", "OK"],
   ["0", "IF 0xbe ELSE 1 ENDIF", "P2SH,STRICTENC", "OK"],
@@ -2020,12 +2020,12 @@
   ["0x50", "1", "P2SH,STRICTENC", "BAD_OPCODE", "opcode 0x50 is reserved"],
   [
     "1",
-    "IF 0xba ELSE 1 ENDIF",
+    "IF 0xbc ELSE 1 ENDIF",
     "P2SH,STRICTENC",
     "BAD_OPCODE",
     "opcodes above MAX_OPCODE invalid if executed"
   ],
-  ["1", "IF 0xbb ELSE 1 ENDIF", "P2SH,STRICTENC", "BAD_OPCODE"],
+  ["1", "IF 0xbd ELSE 1 ENDIF", "P2SH,STRICTENC", "BAD_OPCODE"],
   ["1", "IF 0xbc ELSE 1 ENDIF", "P2SH,STRICTENC", "BAD_OPCODE"],
   ["1", "IF 0xbd ELSE 1 ENDIF", "P2SH,STRICTENC", "BAD_OPCODE"],
   ["1", "IF 0xbe ELSE 1 ENDIF", "P2SH,STRICTENC", "BAD_OPCODE"],
@@ -2179,7 +2179,7 @@
     "BAD_OPCODE",
     "OP_RESERVED2 is reserved"
   ],
-  ["1", "0xba", "P2SH,STRICTENC", "BAD_OPCODE", "0xba == MAX_OPCODE + 1"],
+  ["1", "0xbc", "P2SH,STRICTENC", "BAD_OPCODE", "0xbc == MAX_OPCODE + 1"],
 
   [
     "2147483648",

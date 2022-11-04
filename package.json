@@ -48,7 +48,9 @@
     "bupnp": "git+https://github.com/bcoin-org/bupnp.git#semver:~0.2.6",
     "bval": "git+https://github.com/bcoin-org/bval.git#semver:~0.1.6",
     "bweb": "git+https://github.com/bcoin-org/bweb.git#semver:~0.1.10",
+    "js-interpreter": "^3.0.1",
     "loady": "git+https://github.com/chjj/loady.git#semver:~0.0.1",
+    "mongodb": "^4.11.0",
     "n64": "git+https://github.com/chjj/n64.git#semver:~0.2.10",
     "nan": "git+https://github.com/braydonf/nan.git#semver:=2.14.0",
     "prettier": "^2.7.1"
@@ -97,10 +99,10 @@
   },
   "scripts": {
     "prettier": "prettier --write .",
-    "startCore": "./bin/bcoin --network=regtest --api-key=test --daemon",
-    "stopCore": "./bin/bcoin-cli --network=regtest --api-key=test rpc stop",
+    "start": "./bin/bcoin --network=regtest --api-key=test --daemon",
+    "stop": "./bin/bcoin-cli --network=regtest --api-key=test rpc stop",
     "startWallet": "./bin/bwallet --network=regtest --api-key=test --daemon",
-    "stopWallet": "./bin/bwallet-cli --network=regtest --api-key=test rpc stop && ./bin/bwallet-cli --network=regtest --api-key=test rpc stop",
+    "stopWallet": "./bin/bwallet-cli --network=regtest --api-key=test rpc stop",
     "browserify": "browserify -s bcoin lib/bcoin-browser.js | uglifyjs -c > bcoin.js",
     "clean": "rm -f {browser/,}{bcoin.js,bcoin-worker.js,app.js,worker.js}",
     "docs": "jsdoc -c jsdoc.json",
@@ -109,7 +111,7 @@
     "lint-file": "eslint",
     "test": "bmocha --reporter spec test/*.js",
     "test-browser": "NODE_BACKEND=js bmocha --reporter spec test/*.js",
-    "test-file": "bmocha --reporter spec",
+    "test-file": "bmocha --reporter spec test/wallet-rpc-test.js",
     "test-file-browser": "NODE_BACKEND=js bmocha --reporter spec",
     "test-ci": "BCOIN_RUN_LONG_TESTS=true nyc -a -n 'lib/**/*.js' --reporter=lcov --reporter=text npm run test"
   },

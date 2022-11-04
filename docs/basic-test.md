@@ -1,8 +1,7 @@
 # How to generate coin in regtest
 
 ```shell
-yarn startCore
-yarn startWallet
+yarn start
 # get origin balance
 ./bin/bwallet-cli --network=regtest --api-key=test rpc getbalance
 # get my wallet address
@@ -12,6 +11,5 @@ yarn startWallet
 # check result
 ./bin/bcoin-cli --network=regtest --api-key=test rpc getblockchaininfo
 ./bin/bwallet-cli --network=regtest --api-key=test rpc getbalance
-yarn stopCore
-yarn stopWallet
+yarn stop
 ```

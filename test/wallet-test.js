@@ -194,7 +194,7 @@ async function testP2SH(witness, nesting) {
 
   send.addOutput(await recipient.receiveAddress(), 5460);
 
-  assert(!send.verify(flags));
+  assert(!(await send.verify(flags)));
 
   await alice.fund(send, {
     rate: 10000,
@@ -203,12 +203,12 @@ async function testP2SH(witness, nesting) {
 
   await alice.sign(send);
 
-  assert(!send.verify(flags));
+  assert(!(await send.verify(flags)));
 
   await bob.sign(send);
 
   const [tx, view] = send.commit();
-  assert(tx.verify(view, flags));
+  assert(await tx.verify(view, flags));
 
   assert.strictEqual(await alice.changeDepth(), 1);
 
@@ -239,7 +239,7 @@ async function testP2SH(witness, nesting) {
   input[vector].setData(2, Buffer.alloc(73, 0x00));
   input[vector].compile();
 
-  assert(!tx.verify(view, flags));
+  assert(!(await tx.verify(view, flags)));
   assert.strictEqual(tx.getFee(view), 10000);
 }
 
@@ -1022,7 +1022,7 @@ describe("Wallet", function () {
     assert.strictEqual(await bob.sign(tx), 1);
 
     // Verify
-    assert.strictEqual(tx.verify(), true);
+    assert.strictEqual(await tx.verify(), true);
 
     tx.inputs.length = 0;
     tx.addCoin(coins1[1]);
@@ -1033,7 +1033,7 @@ describe("Wallet", function () {
     assert.strictEqual(await bob.sign(tx), 1);
 
     // Verify
-    assert.strictEqual(tx.verify(), true);
+    assert.strictEqual(await tx.verify(), true);
   });
 
   it("should verify 2-of-3 p2sh tx", async () => {
@@ -1307,11 +1307,11 @@ describe("Wallet", function () {
     }
 
     assert(err);
-    assert(!t2.verify());
+    assert(!(await t2.verify()));
 
     // Should succeed
     await wallet.sign(t2, "foo");
-    assert(t2.verify());
+    assert(await t2.verify());
   });
 
   it("should fill tx with inputs with subtract fee (1)", async () => {

@@ -196,25 +196,25 @@ describe("TX", function () {
   for (const noCache of [false, true]) {
     const suffix = noCache ? "without cache" : "with cache";
 
-    it(`should verify non-minimal output ${suffix}`, () => {
+    it(`should verify non-minimal output ${suffix}`, async () => {
       const [tx, view] = tx1.getTX();
       clearCache(tx, noCache);
-      assert(tx.verify(view, Script.flags.VERIFY_P2SH));
+      assert(await tx.verify(view, Script.flags.VERIFY_P2SH));
     });
 
-    it(`should verify tx.version == 0 ${suffix}`, () => {
+    it(`should verify tx.version == 0 ${suffix}`, async () => {
       const [tx, view] = tx2.getTX();
       clearCache(tx, noCache);
-      assert(tx.verify(view, Script.flags.VERIFY_P2SH));
+      assert(await tx.verify(view, Script.flags.VERIFY_P2SH));
     });
 
-    it(`should verify sighash_single bug w/ findanddelete ${suffix}`, () => {
+    it(`should verify sighash_single bug w/ findanddelete ${suffix}`, async () => {
       const [tx, view] = tx3.getTX();
       clearCache(tx, noCache);
-      assert(tx.verify(view, Script.flags.VERIFY_P2SH));
+      assert(await tx.verify(view, Script.flags.VERIFY_P2SH));
     });
 
-    it(`should verify high S value with only DERSIG enabled ${suffix}`, () => {
+    it(`should verify high S value with only DERSIG enabled ${suffix}`, async () => {
       const [tx, view] = tx4.getTX();
       const coin = view.getOutputFor(tx.inputs[0]);
       const flags = Script.flags.VERIFY_P2SH | Script.flags.VERIFY_DERSIG;
@@ -222,7 +222,7 @@ describe("TX", function () {
       assert(tx.verifyInput(0, coin, flags));
     });
 
-    it(`should parse witness tx properly ${suffix}`, () => {
+    it(`should parse witness tx properly ${suffix}`, async () => {
       const [tx] = tx5.getTX();
       clearCache(tx, noCache);
 
@@ -252,16 +252,16 @@ describe("TX", function () {
       assert.notStrictEqual(tx.txid(), tx2.wtxid());
     });
 
-    it(`should verify the coolest tx ever sent ${suffix}`, () => {
+    it(`should verify the coolest tx ever sent ${suffix}`, async () => {
       const [tx, view] = tx6.getTX();
       clearCache(tx, noCache);
-      assert(tx.verify(view, Script.flags.VERIFY_NONE));
+      assert(await tx.verify(view, Script.flags.VERIFY_NONE));
     });
 
-    it(`should verify a historical transaction ${suffix}`, () => {
+    it(`should verify a historical transaction ${suffix}`, async () => {
       const [tx, view] = tx7.getTX();
       clearCache(tx, noCache);
-      assert(tx.verify(view));
+      assert(await tx.verify(view));
     });
 
     for (const tests of [validTests, invalidTests]) {
@@ -281,43 +281,43 @@ describe("TX", function () {
 
         if (tests === validTests) {
           if (comments.indexOf("Coinbase") === 0) {
-            it(`should handle valid tx test ${suffix}: ${comments}`, () => {
+            it(`should handle valid tx test ${suffix}: ${comments}`, async () => {
               clearCache(tx, noCache);
               assert.ok(tx.isSane());
             });
             continue;
           }
-          it(`should handle valid tx test ${suffix}: ${comments}`, () => {
+          it(`should handle valid tx test ${suffix}: ${comments}`, async () => {
             clearCache(tx, noCache);
-            assert.ok(tx.verify(view, flags));
+            assert.ok(await tx.verify(view, flags));
           });
         } else {
           if (comments === "Duplicate inputs") {
-            it(`should handle invalid tx test ${suffix}: ${comments}`, () => {
+            it(`should handle invalid tx test ${suffix}: ${comments}`, async () => {
               clearCache(tx, noCache);
-              assert.ok(tx.verify(view, flags));
+              assert.ok(await tx.verify(view, flags));
               assert.ok(!tx.isSane());
             });
             continue;
           }
           if (comments === "Negative output") {
-            it(`should handle invalid tx test ${suffix}: ${comments}`, () => {
+            it(`should handle invalid tx test ${suffix}: ${comments}`, async () => {
               clearCache(tx, noCache);
-              assert.ok(tx.verify(view, flags));
+              assert.ok(await tx.verify(view, flags));
               assert.ok(!tx.isSane());
             });
             continue;
           }
           if (comments.indexOf("Coinbase") === 0) {
-            it(`should handle invalid tx test ${suffix}: ${comments}`, () => {
+            it(`should handle invalid tx test ${suffix}: ${comments}`, async () => {
               clearCache(tx, noCache);
               assert.ok(!tx.isSane());
             });
             continue;
           }
-          it(`should handle invalid tx test ${suffix}: ${comments}`, () => {
+          it(`should handle invalid tx test ${suffix}: ${comments}`, async () => {
             clearCache(tx, noCache);
-            assert.ok(!tx.verify(view, flags));
+            assert.ok(!(await tx.verify(view, flags)));
           });
         }
       }
@@ -332,7 +332,7 @@ describe("TX", function () {
 
       clearCache(tx, noCache);
 
-      it(`should get sighash of ${hash} (${hex}) ${suffix}`, () => {
+      it(`should get sighash of ${hash} (${hex}) ${suffix}`, async () => {
         const subscript = script.getSubscript(0).removeSeparators();
         const hash = tx.signatureHash(index, subscript, 0, type, 0);
         assert.bufferEqual(hash, expected);
@@ -340,7 +340,7 @@ describe("TX", function () {
     }
   }
 
-  it("should fail on >51 bit coin values", () => {
+  it("should fail on >51 bit coin values", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY + 1);
     const tx = new TX({
       version: 1,
@@ -357,7 +357,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should handle 51 bit coin values", () => {
+  it("should handle 51 bit coin values", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY);
     const tx = new TX({
       version: 1,
@@ -374,7 +374,7 @@ describe("TX", function () {
     assert.ok(tx.verifyInputs(view, 0));
   });
 
-  it("should fail on >51 bit output values", () => {
+  it("should fail on >51 bit output values", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY);
     const tx = new TX({
       version: 1,
@@ -391,7 +391,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should handle 51 bit output values", () => {
+  it("should handle 51 bit output values", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY);
     const tx = new TX({
       version: 1,
@@ -408,7 +408,7 @@ describe("TX", function () {
     assert.ok(tx.verifyInputs(view, 0));
   });
 
-  it("should fail on >51 bit fees", () => {
+  it("should fail on >51 bit fees", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY + 1);
     const tx = new TX({
       version: 1,
@@ -425,7 +425,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should fail on >51 bit values from multiple", () => {
+  it("should fail on >51 bit values from multiple", async () => {
     const view = new CoinView();
     const tx = new TX({
       version: 1,
@@ -446,7 +446,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should fail on >51 bit output values from multiple", () => {
+  it("should fail on >51 bit output values from multiple", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY);
     const tx = new TX({
       version: 1,
@@ -471,7 +471,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should fail on >51 bit fees from multiple", () => {
+  it("should fail on >51 bit fees from multiple", async () => {
     const view = new CoinView();
     const tx = new TX({
       version: 1,
@@ -492,7 +492,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should fail to parse >53 bit values", () => {
+  it("should fail to parse >53 bit values", async () => {
     const [input] = createInput(Math.floor(consensus.MAX_MONEY / 2));
 
     const tx = new TX({
@@ -522,7 +522,7 @@ describe("TX", function () {
     assert.throws(() => TX.fromRaw(raw));
   });
 
-  it("should fail on 53 bit coin values", () => {
+  it("should fail on 53 bit coin values", async () => {
     const [input, view] = createInput(MAX_SAFE_INTEGER);
     const tx = new TX({
       version: 1,
@@ -539,7 +539,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should fail on 53 bit output values", () => {
+  it("should fail on 53 bit output values", async () => {
     const [input, view] = createInput(consensus.MAX_MONEY);
     const tx = new TX({
       version: 1,
@@ -556,7 +556,7 @@ describe("TX", function () {
     assert.ok(!tx.verifyInputs(view, 0));
   });
 
-  it("should fail on 53 bit fees", () => {
+  it("should fail on 53 bit fees", async () => {
     const [input, view] = createInput(MAX_SAFE_INTEGER);
     const tx = new TX({
       version: 1,
@@ -574,7 +574,7 @@ describe("TX", function () {
   });
 
   for (const value of [MAX_SAFE_ADDITION, MAX_SAFE_INTEGER]) {
-    it("should fail on >53 bit values from multiple", () => {
+    it("should fail on >53 bit values from multiple", async () => {
       const view = new CoinView();
       const tx = new TX({
         version: 1,
@@ -595,7 +595,7 @@ describe("TX", function () {
       assert.ok(!tx.verifyInputs(view, 0));
     });
 
-    it("should fail on >53 bit output values from multiple", () => {
+    it("should fail on >53 bit output values from multiple", async () => {
       const [input, view] = createInput(consensus.MAX_MONEY);
       const tx = new TX({
         version: 1,
@@ -620,7 +620,7 @@ describe("TX", function () {
       assert.ok(!tx.verifyInputs(view, 0));
     });
 
-    it("should fail on >53 bit fees from multiple", () => {
+    it("should fail on >53 bit fees from multiple", async () => {
       const view = new CoinView();
       const tx = new TX({
         version: 1,
@@ -642,7 +642,7 @@ describe("TX", function () {
     });
   }
 
-  it("should count sigops for multisig", () => {
+  it("should count sigops for multisig", async () => {
     const flags = Script.flags.VERIFY_WITNESS | Script.flags.VERIFY_P2SH;
     const key = KeyRing.generate();
     const pub = key.publicKey;
@@ -662,7 +662,7 @@ describe("TX", function () {
     );
   });
 
-  it("should count sigops for p2sh multisig", () => {
+  it("should count sigops for p2sh multisig", async () => {
     const flags = Script.flags.VERIFY_WITNESS | Script.flags.VERIFY_P2SH;
     const key = KeyRing.generate();
     const pub = key.publicKey;
@@ -686,7 +686,7 @@ describe("TX", function () {
     );
   });
 
-  it("should count sigops for p2wpkh", () => {
+  it("should count sigops for p2wpkh", async () => {
     const flags = Script.flags.VERIFY_WITNESS | Script.flags.VERIFY_P2SH;
     const key = KeyRing.generate();
 
@@ -724,7 +724,7 @@ describe("TX", function () {
     }
   });
 
-  it("should count sigops for nested p2wpkh", () => {
+  it("should count sigops for nested p2wpkh", async () => {
     const flags = Script.flags.VERIFY_WITNESS | Script.flags.VERIFY_P2SH;
     const key = KeyRing.generate();
 
@@ -740,7 +740,7 @@ describe("TX", function () {
     assert.strictEqual(ctx.spend.getSigopsCost(ctx.view, flags), 1);
   });
 
-  it("should count sigops for p2wsh", () => {
+  it("should count sigops for p2wsh", async () => {
     const flags = Script.flags.VERIFY_WITNESS | Script.flags.VERIFY_P2SH;
     const key = KeyRing.generate();
     const pub = key.publicKey;
@@ -765,7 +765,7 @@ describe("TX", function () {
     );
   });
 
-  it("should count sigops for nested p2wsh", () => {
+  it("should count sigops for nested p2wsh", async () => {
     const flags = Script.flags.VERIFY_WITNESS | Script.flags.VERIFY_P2SH;
     const key = KeyRing.generate();
     const pub = key.publicKey;
@@ -787,7 +787,7 @@ describe("TX", function () {
     assert.strictEqual(ctx.spend.getSigopsCost(ctx.view, flags), 2);
   });
 
-  it("should return addresses for standard inputs", () => {
+  it("should return addresses for standard inputs", async () => {
     // txid: 7ef7cde4e4a7829ea6feaf377c924b36d0958e2231a31ff268bd33a59ac9e178
     const [tx, view] = tx2.getTX();
 
@@ -807,7 +807,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return addresses for standard outputs", () => {
+  it("should return addresses for standard outputs", async () => {
     // txid: 7f2dc9bcc0b1b0d19a4cb62d0f6474990c12a5b996d2fa2c4be54ca1beb5d339
     const [tx] = tx7.getTX();
 
@@ -827,7 +827,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return addresses for standard inputs and outputs", () => {
+  it("should return addresses for standard inputs and outputs", async () => {
     // txid: 7ef7cde4e4a7829ea6feaf377c924b36d0958e2231a31ff268bd33a59ac9e178
     const [tx, view] = tx2.getTX();
 
@@ -851,7 +851,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return merged addresses for same input/output address", () => {
+  it("should return merged addresses for same input/output address", async () => {
     // txid: 7f2dc9bcc0b1b0d19a4cb62d0f6474990c12a5b996d2fa2c4be54ca1beb5d339
     const [tx, view] = tx7.getTX();
 
@@ -873,7 +873,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return addresses with witness data", () => {
+  it("should return addresses with witness data", async () => {
     const [tx, view] = tx5.getTX();
 
     const addresses = [
@@ -901,7 +901,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return address hashes for standard inputs and outputs", () => {
+  it("should return address hashes for standard inputs and outputs", async () => {
     // txid: 7ef7cde4e4a7829ea6feaf377c924b36d0958e2231a31ff268bd33a59ac9e178
     const [tx, view] = tx2.getTX();
 
@@ -922,7 +922,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return address hashes for standard inputs", () => {
+  it("should return address hashes for standard inputs", async () => {
     // txid: 7ef7cde4e4a7829ea6feaf377c924b36d0958e2231a31ff268bd33a59ac9e178
     const [tx, view] = tx2.getTX();
 
@@ -939,7 +939,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return address hashes for standard outputs", () => {
+  it("should return address hashes for standard outputs", async () => {
     // txid: 7ef7cde4e4a7829ea6feaf377c924b36d0958e2231a31ff268bd33a59ac9e178
     const [tx] = tx2.getTX();
 
@@ -957,7 +957,7 @@ describe("TX", function () {
     });
   });
 
-  it("should return all prevouts", () => {
+  it("should return all prevouts", async () => {
     const [tx] = tx3.getTX();
 
     const expectedPrevouts = [
@@ -973,7 +973,7 @@ describe("TX", function () {
     });
   });
 
-  it("should serialize without witness data", () => {
+  it("should serialize without witness data", async () => {
     const [tx] = tx2.getTX();
     const [txWit] = tx5.getTX();
 
@@ -990,7 +990,7 @@ describe("TX", function () {
     assert.strictEqual(tx2normal.hasWitness(), false);
   });
 
-  it("should check if tx is free", () => {
+  it("should check if tx is free", async () => {
     const value = 100000000; // 1 btc
     const height = 100;
     const [input, view] = createInput(value);
@@ -1027,7 +1027,7 @@ describe("TX", function () {
     assert.strictEqual(freeAt35size, true);
   });
 
-  it("should return correct minFee and roundedFee", () => {
+  it("should return correct minFee and roundedFee", async () => {
     const value = 100000000; // 1 btc
 
     const [input] = createInput(value);
@@ -1062,7 +1062,7 @@ describe("TX", function () {
     assert.strictEqual(tx.getRoundFee(1001, rate), 2000);
   });
 
-  it("should return JSON for tx", () => {
+  it("should return JSON for tx", async () => {
     const [tx, view] = tx2.getTX();
     const hash =
       "7ef7cde4e4a7829ea6feaf377c924b36d0958e22" + "31a31ff268bd33a59ac9e178";
@@ -1117,7 +1117,7 @@ describe("TX", function () {
     }
   });
 
-  it("should recover coins from JSON", () => {
+  it("should recover coins from JSON", async () => {
     const [tx, view] = tx2.getTX();
 
     const mtx = MTX.fromTX(tx);
@@ -1132,7 +1132,7 @@ describe("TX", function () {
     assert.strictEqual(value1, value2);
   });
 
-  it("should inspect TX", () => {
+  it("should inspect TX", async () => {
     const tx = new TX();
     const fmt = nodejsUtil.format(tx);
     assert(typeof fmt === "string");

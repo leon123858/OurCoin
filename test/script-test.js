@@ -11,6 +11,7 @@ const Opcode = require("../lib/script/opcode");
 const TX = require("../lib/primitives/tx");
 const consensus = require("../lib/protocol/consensus");
 const { fromFloat } = require("../lib/utils/fixed");
+const { ObjectId } = require("mongodb");
 
 // test files: https://github.com/bitcoin/bitcoin/tree/master/src/test/data
 const scripts = require("./data/core-data/script-tests.json");
@@ -265,18 +266,45 @@ describe("Script", function () {
     assert(isSuccess(stack));
   });
 
-  for (const data of scripts) {
-    if (data.length === 1) continue;
+  it("should handle OP_Contract correctly", async () => {
+    const id = new ObjectId().toString();
+    // TODO: deploy contract to sandbox
+    const input = new Script([
+      Opcode.fromString(`var state = JSON.parse(ORIGIN_STATE);
+      state.number = state.number ? number + 1 : number;
+      if(typeof message !== 'undefined')
+        state['message'] = message;
+      saveState(state);`),
+      Opcode.fromSymbol("deploycontract"),
+    ]);
+    // TODO: call contract in sandbox
+    const args = { message: "Hello Smart Contract!!", number: 5 };
+    const output = new Script([
+      Opcode.fromString(JSON.stringify(args)),
+      Opcode.fromString(id, "hex"),
+      Opcode.fromSymbol("callcontract"),
+    ]);
 
-    const test = parseScriptTest(data);
-    const { witness, input, output } = test;
-    const { value, flags } = test;
-    const { expected, comments } = test;
+    const stack = new Stack();
 
-    for (const noCache of [false, true]) {
-      const suffix = noCache ? "without cache" : "with cache";
+    await input.execute(stack, null, null, null, null, null, id);
+    await output.execute(stack, null, null, null, null, null, id);
 
-      it(`should handle script test ${suffix}:${comments}`, () => {
+    assert(stack.length == 0);
+  });
+
+  it("should handle data script test", async () => {
+    for (const data of scripts) {
+      if (data.length === 1) continue;
+
+      const test = parseScriptTest(data);
+      const { witness, input, output } = test;
+      const { value, flags } = test;
+      const { expected, comments } = test;
+
+      for (const noCache of [false, true]) {
+        const suffix = noCache ? "without cache" : "with cache";
+
         // Funding transaction.
         const prev = new TX({
           version: 1,
@@ -330,19 +358,19 @@ describe("Script", function () {
 
         let err;
         try {
-          Script.verify(input, witness, output, tx, 0, value, flags);
+          await Script.verify(input, witness, output, tx, 0, value, flags);
         } catch (e) {
           err = e;
         }
 
         if (expected !== "OK") {
           assert(err instanceof Error);
-          assert.strictEqual(err.code, expected);
+          assert.strictEqual(err.code, expected, `${suffix}:${comments}`);
           return;
         }
 
         assert.ifError(err);
-      });
+      }
     }
-  }
+  });
 });

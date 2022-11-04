@@ -754,4 +754,24 @@ describe("Wallet RPC Methods", function () {
       assert.equal(balance, 0.01843);
     });
   });
+
+  describe("contract", () => {
+    let txid;
+    it("should rpc deploycontract", async () => {
+      await wclient.execute("selectwallet", ["miner"]);
+      txid = await wclient.execute("deploycontract", ["var rpc='rpc test'"]);
+      assert.strictEqual(txid.length, 64);
+      const addressOther = await wclient.execute("getnewaddress", []);
+      await nclient.execute("generatetoaddress", [1, addressOther]);
+    });
+
+    xit("should rpc callcontract", async () => {
+      await wclient.execute("selectwallet", ["miner"]);
+      const txid = await wclient.execute("callcontract", [
+        txid,
+        "{message:'Hello rpc contract'}",
+      ]);
+      assert.strictEqual(txid.length, 64);
+    });
+  });
 });

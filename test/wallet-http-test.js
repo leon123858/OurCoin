@@ -298,7 +298,11 @@ for (const witnessOpt of witnessOptions) {
           assert.notStrictEqual(vector, "", "Input must be signed.");
         }
 
-        assert.strictEqual(mtx.verify(), true, "Transaction must be signed.");
+        assert.strictEqual(
+          await mtx.verify(),
+          true,
+          "Transaction must be signed."
+        );
       });
     }
 
