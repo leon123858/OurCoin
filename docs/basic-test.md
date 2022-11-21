@@ -13,3 +13,32 @@ yarn start
 ./bin/bwallet-cli --network=regtest --api-key=test rpc getbalance
 yarn stop
 ```
+
+# How to run contract in regtest
+
+```shell
+yarn start
+# 發佈程式碼
+./bin/bwallet-cli --network=regtest --api-key=test rpc deploycontract "合約程式碼"
+# 挖礦完成發布
+./bin/bcoin-cli --network=regtest --api-key=test rpc generatetoaddress 1 [wallet Address]
+# 執行合約
+./bin/bwallet-cli --network=regtest --api-key=test rpc callcontract [contract Address] '合約參數(json物件)'
+# 挖礦完成執行
+./bin/bcoin-cli --network=regtest --api-key=test rpc generatetoaddress 1 [wallet Address]
+yarn stop
+```
+
+範例合約程式碼
+
+```js
+var state = JSON.pars(ORIGIN_STATE);
+if (typeof message !== "undefined") state["message"] = message;
+saveState(state);
+```
+
+範例合約參數
+
+```json
+{ "message": "Hello rpc contract" }
+```

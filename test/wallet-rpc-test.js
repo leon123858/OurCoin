@@ -759,19 +759,27 @@ describe("Wallet RPC Methods", function () {
     let txid;
     it("should rpc deploycontract", async () => {
       await wclient.execute("selectwallet", ["miner"]);
-      txid = await wclient.execute("deploycontract", ["var rpc='rpc test'"]);
+      txid = await wclient.execute("deploycontract", [
+        `var state = JSON.parse(ORIGIN_STATE);
+      state.rpcNumber = state.rpcNumber ? state.rpcNumber + 1 : 1;
+      if(typeof message !== 'undefined')
+        state['message'] = message;
+      saveState(state);`,
+      ]);
       assert.strictEqual(txid.length, 64);
       const addressOther = await wclient.execute("getnewaddress", []);
       await nclient.execute("generatetoaddress", [1, addressOther]);
     });
 
-    xit("should rpc callcontract", async () => {
+    it("should rpc callcontract", async () => {
       await wclient.execute("selectwallet", ["miner"]);
-      const txid = await wclient.execute("callcontract", [
+      const txid_new = await wclient.execute("callcontract", [
         txid,
-        "{message:'Hello rpc contract'}",
+        '{"message":"Hello rpc contract"}',
       ]);
-      assert.strictEqual(txid.length, 64);
+      assert.strictEqual(txid_new.length, 64);
+      const addressOther = await wclient.execute("getnewaddress", []);
+      await nclient.execute("generatetoaddress", [1, addressOther]);
     });
   });
 });
