@@ -4,7 +4,7 @@
 "use strict";
 
 // const assert = require("bsert");
-const sandbox = require("../lib/sandbox");
+const { Sandbox } = require("../lib/sandbox/sandbox");
 
 function randomHash(bit) {
   bit = bit || 64;
@@ -22,7 +22,7 @@ describe("Sandbox", function () {
     id = randomHash();
   });
   it("should deploy contract in it", async () => {
-    const newSandbox = new sandbox.sandbox(id);
+    const newSandbox = new Sandbox(id);
     await newSandbox.initSandbox();
     await newSandbox.deploy(`var state = JSON.parse(ORIGIN_STATE);
     state.number = state.number ? state.number + 1 : 1;
@@ -32,7 +32,7 @@ describe("Sandbox", function () {
     await newSandbox.closeSandbox();
   });
   it("should call contract in it", async () => {
-    const newSandbox = new sandbox.sandbox(id);
+    const newSandbox = new Sandbox(id);
     await newSandbox.initSandbox();
     await newSandbox.execute({});
     await newSandbox.execute({ message: "" });
