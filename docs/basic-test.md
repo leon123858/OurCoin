@@ -6,6 +6,8 @@ yarn start
 ./bin/bwallet-cli --network=regtest --api-key=test rpc getbalance
 # get my wallet address
 ./bin/bwallet-cli --network=regtest --api-key=test rpc getnewaddress
+# get my wallet address
+./bin/bwallet-cli --network=regtest --api-key=test rpc getaccountaddress "default"
 # generate(mining)
 ./bin/bcoin-cli --network=regtest --api-key=test rpc generatetoaddress 100 [wallet Address]
 # check result
