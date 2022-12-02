@@ -274,7 +274,7 @@ describe("Script", function () {
       state.number = state.number ? number + 1 : number;
       if(typeof message !== 'undefined')
         state['message'] = message;
-      saveState(state);`),
+      saveState(JSON.stringify(state));`),
       Opcode.fromSymbol("deploycontract"),
     ]);
     // TODO: call contract in sandbox

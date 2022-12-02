@@ -25,18 +25,26 @@ describe("Sandbox", function () {
     const newSandbox = new Sandbox(id);
     await newSandbox.initSandbox();
     await newSandbox.deploy(`var state = JSON.parse(ORIGIN_STATE);
-    state.number = state.number ? state.number + 1 : 1;
-    if(typeof message !== 'undefined')
-      state['message'] = message;
-    saveState(state);`);
+    if (action == 'create') {
+      if (typeof state['NFT'] == 'undefined') state['NFT'] = [];
+      state['NFT'].push({ url: url, title: title });
+    }
+    //print(state)
+    saveState(JSON.stringify(state))
+    `);
     await newSandbox.closeSandbox();
   });
   it("should call contract in it", async () => {
+    const params = {
+      action: "create",
+      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+      title: "測試圖片",
+    };
     const newSandbox = new Sandbox(id);
     await newSandbox.initSandbox();
-    await newSandbox.execute({});
-    await newSandbox.execute({ message: "" });
-    await newSandbox.execute({ message: "Hello Contract!" });
+    await newSandbox.execute(params);
+    await newSandbox.execute(params);
+    await newSandbox.execute(params);
     await newSandbox.closeSandbox();
   });
 });

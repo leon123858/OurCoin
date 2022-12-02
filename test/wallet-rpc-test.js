@@ -764,7 +764,7 @@ describe("Wallet RPC Methods", function () {
       state.rpcNumber = state.rpcNumber ? state.rpcNumber + 1 : 1;
       if(typeof message !== 'undefined')
         state['message'] = message;
-      saveState(state);`,
+      saveState(JSON.stringify(state));`,
       ]);
       assert.strictEqual(txid.length, 64);
       const addressOther = await wclient.execute("getnewaddress", []);

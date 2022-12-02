@@ -32,13 +32,26 @@ yarn stop
 範例合約程式碼
 
 ```js
-var state = JSON.pars(ORIGIN_STATE);
+var state = JSON.parse(ORIGIN_STATE);
+state.rpcNumber = state.rpcNumber ? state.rpcNumber + 1 : 1;
 if (typeof message !== "undefined") state["message"] = message;
-saveState(state);
+saveState(JSON.stringify(state));
 ```
 
 範例合約參數
 
 ```json
 { "message": "Hello rpc contract" }
+```
+
+進階合約程式碼
+
+```js
+var state = JSON.parse(ORIGIN_STATE);
+if (action == "create") {
+  if (typeof state["NFT"] == "undefined") state["NFT"] = [];
+  state["NFT"].push({ url: url, title: title });
+}
+//print(state) //can log in terminal when mining
+saveState(JSON.stringify(state));
 ```
