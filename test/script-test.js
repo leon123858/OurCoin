@@ -4,6 +4,7 @@
 "use strict";
 
 const assert = require("bsert");
+const { v4: uid } = require("uuid");
 const Script = require("../lib/script/script");
 const Witness = require("../lib/script/witness");
 const Stack = require("../lib/script/stack");
@@ -267,28 +268,35 @@ describe("Script", function () {
   });
 
   it("should handle OP_Contract correctly", async () => {
-    const id = new ObjectId().toString();
+    const id = uid();
     // TODO: deploy contract to sandbox
     const input = new Script([
-      Opcode.fromString(`var state = JSON.parse(ORIGIN_STATE);
+      Opcode.fromString("fakepublicaddress"),
+      Opcode.fromString(id),
+      Opcode.fromString(
+        `var state = JSON.parse(ORIGIN_STATE);
       state.number = state.number ? number + 1 : number;
       if(typeof message !== 'undefined')
         state['message'] = message;
-      saveState(JSON.stringify(state));`),
+      saveState(JSON.stringify(state));`
+      ),
       Opcode.fromSymbol("deploycontract"),
     ]);
-    // TODO: call contract in sandbox
+    // TODO: call/transfer contract
     const args = { message: "Hello Smart Contract!!", number: 5 };
     const output = new Script([
       Opcode.fromString(JSON.stringify(args)),
-      Opcode.fromString(id, "hex"),
+      Opcode.fromString(id),
       Opcode.fromSymbol("callcontract"),
+      Opcode.fromString("newpublicaddress"),
+      Opcode.fromString(id),
+      Opcode.fromSymbol("transfercontract"),
     ]);
 
     const stack = new Stack();
 
-    await input.execute(stack, null, null, null, null, null, id);
-    await output.execute(stack, null, null, null, null, null, id);
+    await input.execute(stack, null, null, null, null, null);
+    await output.execute(stack, null, null, null, null, null);
 
     assert(stack.length == 0);
   });
