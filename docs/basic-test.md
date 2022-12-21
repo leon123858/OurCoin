@@ -18,6 +18,8 @@ yarn stop
 
 # How to run contract in regtest
 
+note: should run a mongodb local
+
 ```shell
 yarn start
 # 發佈程式碼 會回傳=>合約地址 ex:34477beb-5d66-447f-8d4b-9f8301a6c460
