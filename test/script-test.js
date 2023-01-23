@@ -274,11 +274,8 @@ describe("Script", function () {
       Opcode.fromString("fakepublicaddress"),
       Opcode.fromString(id),
       Opcode.fromString(
-        `var state = JSON.parse(ORIGIN_STATE);
-      state.number = state.number ? number + 1 : number;
-      if(typeof message !== 'undefined')
-        state['message'] = message;
-      saveState(JSON.stringify(state));`
+        `state.number = state.number ? state.number + 1 : args.number;
+        if (!state.message) state["message"] = args.message;`
       ),
       Opcode.fromSymbol("deploycontract"),
     ]);

@@ -24,13 +24,11 @@ describe("Sandbox", function () {
   it("should deploy contract in it", async () => {
     const newSandbox = new Sandbox(id);
     await newSandbox.initSandbox();
-    await newSandbox.deploy(`var state = JSON.parse(ORIGIN_STATE);
-    if (action == 'create') {
-      if (typeof state['NFT'] == 'undefined') state['NFT'] = [];
-      state['NFT'].push({ url: url, title: title });
+    await newSandbox.deploy(`
+    if (!state.NFT) state.NFT = [];
+    if (args.action == 'create') {
+      state['NFT'].push({ url: args.url, title: args.title });
     }
-    //print(state)
-    saveState(JSON.stringify(state))
     `);
     await newSandbox.closeSandbox();
   });

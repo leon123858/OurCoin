@@ -40,10 +40,8 @@ yarn stop
 範例合約程式碼
 
 ```js
-var state = JSON.parse(ORIGIN_STATE);
-state.rpcNumber = state.rpcNumber ? state.rpcNumber + 1 : 1;
-if (typeof message !== "undefined") state["message"] = message;
-saveState(JSON.stringify(state));
+state.number = state.number ? state.number + 1 : 1;
+if (!state.message) state["message"] = args.message;
 ```
 
 範例合約參數
@@ -55,11 +53,8 @@ saveState(JSON.stringify(state));
 進階合約程式碼
 
 ```js
-var state = JSON.parse(ORIGIN_STATE);
-if (action == "create") {
-  if (typeof state["NFT"] == "undefined") state["NFT"] = [];
-  state["NFT"].push({ url: url, title: title });
+if (!state.NFT) state.NFT = [];
+if (args.action == "create") {
+  state["NFT"].push({ url: args.url, title: args.title });
 }
-//print(state) //can log in terminal when mining
-saveState(JSON.stringify(state));
 ```

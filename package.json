@@ -49,13 +49,13 @@
     "bupnp": "git+https://github.com/bcoin-org/bupnp.git#semver:~0.2.6",
     "bval": "git+https://github.com/bcoin-org/bval.git#semver:~0.1.6",
     "bweb": "git+https://github.com/bcoin-org/bweb.git#semver:~0.1.10",
-    "js-interpreter": "^3.0.1",
     "loady": "git+https://github.com/chjj/loady.git#semver:~0.0.1",
     "mongodb": "^4.11.0",
     "n64": "git+https://github.com/chjj/n64.git#semver:~0.2.10",
     "nan": "git+https://github.com/braydonf/nan.git#semver:=2.14.0",
     "prettier": "^2.7.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vm2": "^3.9.13"
   },
   "bundleDependencies": [
     "bcfg",
