@@ -45,4 +45,32 @@ describe("Sandbox", function () {
     await newSandbox.execute(params);
     await newSandbox.closeSandbox();
   });
+  it("should call other contract in contract", async () => {
+    const newId = randomHash();
+    const newSandbox = new Sandbox(newId);
+    await newSandbox.initSandbox();
+    await newSandbox.deploy(`
+      await execTransaction(args.id,${JSON.stringify({
+        action: "create",
+        url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+        title: "contract call",
+      })})`);
+    await newSandbox.closeSandbox();
+    const newSandbox2 = new Sandbox(newId);
+    await newSandbox2.initSandbox();
+    await newSandbox2.execute({ id });
+    await newSandbox2.closeSandbox();
+  });
+  xit("should be shutdown when contract call too long(use recursive to test it)", async () => {
+    // vm2 can not resolve this problem now
+    const newId = randomHash();
+    const newSandbox = new Sandbox(newId);
+    await newSandbox.initSandbox();
+    await newSandbox.deploy(`await execTransaction(args.id,{id:args.id})`);
+    await newSandbox.closeSandbox();
+    const newSandbox2 = new Sandbox(newId);
+    await newSandbox2.initSandbox();
+    await newSandbox2.execute({ id: newId });
+    await newSandbox2.closeSandbox();
+  });
 });
