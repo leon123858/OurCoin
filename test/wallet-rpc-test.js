@@ -760,11 +760,8 @@ describe("Wallet RPC Methods", function () {
     it("should rpc deploycontract", async () => {
       await wclient.execute("selectwallet", ["miner"]);
       uid = await wclient.execute("deploycontract", [
-        `var state = JSON.parse(ORIGIN_STATE);
-      state.rpcNumber = state.rpcNumber ? state.rpcNumber + 1 : 1;
-      if(typeof message !== 'undefined')
-        state['message'] = message;
-      saveState(JSON.stringify(state));`,
+        `state.number = state.number ? state.number + 1 : 1;
+      if (!state.message) state["message"] = args.message;`,
       ]);
       assert.strictEqual(uid.length, 36);
       const addressOther = await wclient.execute("getnewaddress", []);
