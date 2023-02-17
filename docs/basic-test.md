@@ -26,7 +26,7 @@ yarn start
 ./bin/bwallet-cli --network=regtest --api-key=test rpc deploycontract "合約程式碼"
 # 挖礦完成發布
 ./bin/bcoin-cli --network=regtest --api-key=test rpc generatetoaddress 1 [wallet Address]
-# 執行合約
+# 執行合約 sample parameter: '{"message":"Hello rpc contract test123","number":22}'
 ./bin/bwallet-cli --network=regtest --api-key=test rpc callcontract [contract Address] '合約參數(json物件)'
 # 挖礦完成執行
 ./bin/bcoin-cli --network=regtest --api-key=test rpc generatetoaddress 1 [wallet Address]
@@ -38,10 +38,15 @@ yarn stop
 ```
 
 範例合約程式碼
+in CLI:
+
+```
+"state.number = args.number ? args.number + 1 : 1; if (args.message) state['message'] = args.message;"
+```
 
 ```js
-state.number = state.number ? state.number + 1 : 1;
-if (!state.message) state["message"] = args.message;
+state.number = args.number ? args.number + 1 : 1;
+if (args.message) state["message"] = args.message;
 ```
 
 範例合約參數
@@ -53,7 +58,7 @@ if (!state.message) state["message"] = args.message;
 進階合約程式碼
 
 ```js
-if (!state.NFT) state.NFT = [];
+if (state.NFT == undefined) state.NFT = [];
 if (args.action == "create") {
   state["NFT"].push({ url: args.url, title: args.title });
 }

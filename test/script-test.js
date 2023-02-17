@@ -275,7 +275,7 @@ describe("Script", function () {
       Opcode.fromString(id),
       Opcode.fromString(
         `state.number = state.number ? state.number + 1 : args.number;
-        if (!state.message) state["message"] = args.message;`
+        if (state.message==undefined) state["message"] = args.message;`
       ),
       Opcode.fromSymbol("deploycontract"),
     ]);
